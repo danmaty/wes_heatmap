@@ -160,8 +160,7 @@ def make_dicts(file):
 
 @st.cache_data
 def get_data_from_deta():
-    # deta = Deta(os.environ.get('db_key'))
-    deta = Deta('a07quq8cozm_FYjMzPGnoeDQ6fuP1D4AdgbtwGeAP5MN')
+    deta = Deta(os.environ.get('db_key'))
     ddrive = deta.Drive('data')
     
     a = BytesIO()
