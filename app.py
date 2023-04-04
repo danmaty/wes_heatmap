@@ -160,7 +160,8 @@ def make_dicts(file):
 
 @st.cache_data
 def get_data_from_deta():
-    deta = Deta(os.environ.get('db_key'))
+    # deta = Deta(os.environ.get('db_key'))
+    deta = Deta('a07quq8cozm_FYjMzPGnoeDQ6fuP1D4AdgbtwGeAP5MN')
     ddrive = deta.Drive('data')
     
     a = BytesIO()
@@ -184,9 +185,10 @@ def get_data_from_deta():
 ######################################
 #   Init
 ######################################
-ff = get_data_from_deta()[0]
-ll_ff = get_data_from_deta()[1]
-dep_ff = get_data_from_deta()[2]
+# ff = get_data_from_deta()[0]
+# ll_ff = get_data_from_deta()[1]
+# dep_ff = get_data_from_deta()[2]
+ff, ll_ff, dep_ff = get_data_from_deta()
 
 df_depots = pd.read_csv(dep_ff)
 df, weeks, ss_dict = proc_file2(ff)
