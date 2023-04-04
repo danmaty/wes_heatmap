@@ -158,7 +158,7 @@ def make_dicts(file):
         print('make_dict', e)
 
 
-# @st.cache_data
+@st.cache_data
 def get_data_from_deta():
     deta = Deta(os.environ.get('db_key'))
     ddrive = deta.Drive('data')
