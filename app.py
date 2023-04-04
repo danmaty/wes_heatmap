@@ -77,7 +77,6 @@ def proc_file2(file):
         x['value'] = x['value'].map(neg_map)
         x = x[x['value'] != 0]
 
-        # return x[['no', 'name', 'rdc', 'finalmile', 'lat', 'lng', 'value', 'week']], list(x['week'].unique())
         return x, list(x['week'].unique()), storesserved
 
     except Exception as e:
@@ -94,7 +93,6 @@ def make_deck(procd_data):
             elevation_scale=100,
             radius=1000,
             get_fill_color="colors",
-            # get_fill_color=[75, 237, 21, 255],
             pickable=True,
             auto_highlight=True,
         )
@@ -135,10 +133,6 @@ def make_deck(procd_data):
             layers=[column_layer, column_layer_depots],
             initial_view_state=view_state,
             tooltip=tooltip,
-            # api_keys={
-            #     'mapbox': 'pk.eyJ1IjoicGFuZWxvcmciLCJhIjoiY2s1enA3ejhyMWhmZjNobjM1NXhtbWRrMyJ9.B_frQsAVepGIe-HiOJeqvQ'},
-            # map_provider="mapbox",
-            # map_style=pdk.map_styles.SATELLITE,
             map_style=pdk.map_styles.DARK,
         )
 
@@ -186,7 +180,6 @@ with st.sidebar:
 
     col1, col2 = st.columns(2)
 
-    # st.subheader('Temp text')
     FILTER_DEPOTS = st.checkbox('Depots', value=False)
 
     with col1:
