@@ -11,7 +11,8 @@ st.set_page_config(layout="wide",
 
 @st.cache_data
 def get_code():
-    deta = Deta(os.environ.get('db_key'))
+    # deta = Deta(os.environ.get('db_key'))
+    deta = Deta('a07quq8cozm_FYjMzPGnoeDQ6fuP1D4AdgbtwGeAP5MN')
     ddrive = deta.Drive('data')
     with open(ddrive.get('code').read().decode(), 'rb') as f:
         to_ret = f.read()
