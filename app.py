@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 from deta import Deta
+from io import BytesIO
 
 st.set_page_config(layout="wide",
                    page_title="Delivery Code 5 Map",
@@ -161,7 +162,23 @@ def make_dicts(file):
 def get_data_from_deta():
     deta = Deta(os.environ.get('db_key'))
     ddrive = deta.Drive('data')
-    return ddrive.get('data_from_wk5').read().decode(), ddrive.get('stores_no_roi').read().decode(), ddrive.get('depots').read().decode()
+    
+    a = BytesIO()
+    with open(ddrive.get('data_from_wk5').read().decode(), 'rb') as f:
+        a.write(f.read())
+        a.seek(0)
+    
+    b = BytesIO()
+    with open(ddrive.get('stores_no_roi').read().decode(), 'rb') as f:
+        b.write(f.read())
+        b.seek(0)
+    
+    c = BytesIO()
+    with open(ddrive.get('depots').read().decode(), 'rb') as f:
+        c.write(f.read())
+        c.seek(0)
+    
+    return a, b, c
 
 
 ######################################
