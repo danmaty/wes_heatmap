@@ -3,11 +3,12 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 from deta import Deta
-from io import BytesIO
+from io import StringIO
 
 st.set_page_config(layout="wide",
                    page_title="Delivery Code 5 Map",
                    page_icon="uk.png")
+
 
 def color_map(val):
     if 0 > val >= -500:
@@ -78,7 +79,7 @@ def proc_file2(file):
         x['value'] = x['value'].map(neg_map)
         x = x[x['value'] != 0]
 
-        return x, list(x['week'].unique()), storesserved
+        return x, sorted(list(x['week'].unique())), storesserved
 
     except Exception as e:
         print('proc_file2', e)
@@ -152,41 +153,26 @@ def make_dicts(file):
                dict(zip(x['no'], x['rdc'])), \
                dict(zip(x['no'], x['finalmile'])), \
                dict(zip(x['no'], x['name'])), \
-               dict(zip(y['finalmile'], y['sserved'])), \
-
+               dict(zip(y['finalmile'], y['sserved']))
     except Exception as e:
         print('make_dict', e)
 
 
 @st.cache_data
 def get_data_from_deta():
-    deta = Deta(st.secrets["db_key"])
+    deta = Deta(os.environ.get('db_key'))
     ddrive = deta.Drive('data')
-    
-    a = BytesIO()
-    with open(ddrive.get('data_from_wk5').read().decode(), 'rb') as f:
-        a.write(f.read())
-        a.seek(0)
-    
-    b = BytesIO()
-    with open(ddrive.get('stores_no_roi').read().decode(), 'rb') as f:
-        b.write(f.read())
-        b.seek(0)
-    
-    c = BytesIO()
-    with open(ddrive.get('depots').read().decode(), 'rb') as f:
-        c.write(f.read())
-        c.seek(0)
-    
+
+    a = StringIO(ddrive.get('data_from_wk5').read().decode())
+    b = StringIO(ddrive.get('stores_no_roi').read().decode())
+    c = StringIO(ddrive.get('depots').read().decode())
+
     return a, b, c
 
 
 ######################################
 #   Init
 ######################################
-# ff = get_data_from_deta()[0]
-# ll_ff = get_data_from_deta()[1]
-# dep_ff = get_data_from_deta()[2]
 ff, ll_ff, dep_ff = get_data_from_deta()
 
 df_depots = pd.read_csv(dep_ff)
