@@ -180,7 +180,8 @@ df, weeks, ss_dict = proc_file2(ff)
 df_fmile = df.copy()
 
 with st.sidebar:
-    FILTER_WEEKS = st.slider('Argos Week Range', int(weeks[0]), int(weeks[-1]), (int(weeks[-2]), int(weeks[-1])))
+    # FILTER_WEEKS = st.slider('Argos Week Range', int(weeks[0]), int(weeks[-1]), (int(weeks[-2]), int(weeks[-1])))
+    FILTER_WEEKS = st.slider('Argos Week Range', int(weeks[0]), int(weeks[-1]), int(weeks[-2]))
 
     col1, col2 = st.columns(2)
 
@@ -221,8 +222,9 @@ with st.sidebar:
     FILTER_KET_PW = expander_KET.checkbox('Patchway', value=FILTER_KET_ALL)
 
 if FILTER_WEEKS:
-    df = df[df['week'] >= FILTER_WEEKS[0]]
-    df = df[df['week'] <= FILTER_WEEKS[1]]
+    # df = df[df['week'] >= FILTER_WEEKS[0]]
+    # df = df[df['week'] <= FILTER_WEEKS[1]]
+    df = df[df['week'] == FILTER_WEEKS]
 
 if not FILTER_DEPOTS:
     df_depots = df_depots[df_depots['value'] == 1]
@@ -300,15 +302,24 @@ st.markdown(hide_default_format, unsafe_allow_html=True)
 
 viz = st.pydeck_chart(make_deck(df))
 
-df_fmile = df_fmile[df_fmile['week'] >= FILTER_WEEKS[0]]
-df_fmile = df_fmile[df_fmile['week'] <= FILTER_WEEKS[1]]
+# df_fmile = df_fmile[df_fmile['week'] >= FILTER_WEEKS[0]]
+# df_fmile = df_fmile[df_fmile['week'] <= FILTER_WEEKS[1]]
+df_fmile = df_fmile[df_fmile['week'] == FILTER_WEEKS]
 df_fmile['neg2'] = df_fmile['neg'].map(neg_map2)
 df_fmile['value2'] = df_fmile['value'] * df_fmile['neg2']
 
 df_fmile = df_fmile[['finalmile', 'value2']].groupby('finalmile').agg('sum')
 df_fmile.index.names = ['Final Mile']
-df_fmile.columns = ['Net of Week Selection']
-df_fmile['Stores Serviced'] = df_fmile.index.to_series().map(ss_dict)
-df_fmile = df_fmile.sort_values(by=['Net of Week Selection'], ascending=True)
-df_fmile['Net of Week Selection'] = df_fmile['Net of Week Selection'].map('£ {:,.0f}'.format)
-st.dataframe(df_fmile, height=633, width=430)
+df_fmile.columns = ['Net of Selected Week']
+df_fmile["Stores Servd"] = df_fmile.index.to_series().map(ss_dict)
+df_fmile = df_fmile.sort_values(by=['Net of Selected Week'], ascending=True)
+df_fmile["Net / Stores Servd"] = df_fmile['Net of Selected Week'] / df_fmile["Stores Servd"]
+df_fmile['Net of Selected Week'] = df_fmile['Net of Selected Week'].map('£ {:,.0f}'.format)
+df_fmile["Net / Stores Servd"] = df_fmile["Net / Stores Servd"].map('£ {:,.0f}'.format)
+df_fmile.reset_index(inplace=True)
+# st.dataframe(df_fmile, height=633, width=555)
+
+s1 = dict(selector='th', props=[('text-align', 'right')])
+s2 = dict(selector='td', props=[('text-align', 'right')])
+table = df_fmile.style.set_table_styles([s1,s2]).hide(axis=0).set_properties(subset=["Final Mile"], **{'text-align': 'left'}).to_html()     
+st.write(f'{table}', unsafe_allow_html=True)
