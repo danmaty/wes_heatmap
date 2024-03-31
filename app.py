@@ -163,7 +163,7 @@ def get_data_from_deta():
     deta = Deta(os.environ.get('db_key'))
     ddrive = deta.Drive('data')
 
-    a = StringIO(ddrive.get('data_from_wk5').read().decode())
+    a = StringIO(ddrive.get('psp_for_heatmap.csv').read().decode())
     b = StringIO(ddrive.get('stores_no_roi').read().decode())
     c = StringIO(ddrive.get('depots').read().decode())
 
